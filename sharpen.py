@@ -17,15 +17,20 @@ def seg_rgb(pixels, h, w):
 			b[-1].append(tb)
 	return r, g, b
 
-def find_sharpen(multiply, linear_blur):
+def find_sharpen(multiply, linear_blur, pixels):
 	sharpen = []
 	for i in xrange(len(multiply)):
 		sharpen.append([])
 		for j in xrange(len(multiply[i])):
-			sharpen[-1].append(multiply[i][j] - linear_blur[i][j])
+			sharpen[-1].append(multiply[i][j] - linear_blur[i][j] + pixels[i][j])
 	return sharpen		
 
 def sharpen(pic='lena.bmp', sharpen_times=2):
+	im = Image.open(pic)
+	pixels = im.load()
+	h, w = im.size
+	r, g, b = seg_rgb(pixels, h, w)
+
 	multiply_image = multiply.multiply(pic, sharpen_times)
 	multiply_pixels = multiply_image.load()
 	mh, mw = multiply_image.size
@@ -36,9 +41,9 @@ def sharpen(pic='lena.bmp', sharpen_times=2):
 	lbh, lbw = linear_blur_image.size
 	lbr, lbg, lbb = seg_rgb(linear_blur_pixels, lbh, lbw)
 
-	sr = find_sharpen(mr, lbr) 
-	sg = find_sharpen(mg, lbg)
-	sb = find_sharpen(mb, lbb)
+	sr = find_sharpen(r, mr, lbr) 
+	sg = find_sharpen(g, mg, lbg)
+	sb = find_sharpen(b, mb, lbb)
 
 
 	sharpen_image =  Image.new( 'RGB', (mh, mw), "black")
