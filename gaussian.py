@@ -1,17 +1,20 @@
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from PIL import Image
 import math
 import sys
 
-def gaussian_func(x, y, sigma=2.84089642):
+def gaussian_func(x, y, sigma=4.0):
 	result = math.exp(-((x*x) + (y*y))/(2 * sigma * sigma))/(2 * sigma * sigma * math.pi)
 	return result
 
 def kernel_calculation(kernel):
 	ele_sum = 0
+	mid = int(len(kernel)/2)
 	for x in xrange(len(kernel)):
 		for y in xrange(len(kernel[x])):
 			#print (len(kernel) - x - 1), (len(kernel[x]) - y - 1)
-			ele_sum += (gaussian_func(len(kernel) - x - 1, len(kernel[x]) - y - 1) * kernel[x][y])
+			ele_sum += (gaussian_func(len(kernel) - x - 1 - mid, len(kernel[x]) - y - 1 - mid) * kernel[x][y])
 	#print kernel
 	#print ele_sum
 	return int(ele_sum)
@@ -55,7 +58,7 @@ def find_gaussian(pixels, kernel_size):
 			
 	return gaussian
 
-def gaussian(pic='lena.bmp', kernel_size=5):
+def gaussian(pic='lena.bmp', kernel_size=11):
 	if kernel_size <= 1:
 		print "Please select a bigger kernel size"
 		sys.exit(0)
@@ -79,6 +82,7 @@ def gaussian(pic='lena.bmp', kernel_size=5):
 		for j in xrange(w):
 			gi[i, j] = (gr[i][j], gg[i][j], gb[i][j])
 	gaussian_image.show()
+	return gaussian_image
 
 if __name__ == '__main__':
 	gaussian()
@@ -87,6 +91,8 @@ if __name__ == '__main__':
 	for i in xrange(5):
 		kernel.append([])
 		for j in xrange(5):
-			kernel[-1].append(1)
-	print find_gaussian(kernel, 5)
+			kernel[-1].append(1 * gaussian_func(i-2, j-2))
+	
+	for i in xrange(5):
+			print kernel[i]
 	'''
