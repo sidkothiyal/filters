@@ -1,4 +1,6 @@
 from PIL import Image
+import multiply
+import linear_blur
 
 def seg_rgb(pixels, h, w):
 	r = []
@@ -15,28 +17,34 @@ def seg_rgb(pixels, h, w):
 			b[-1].append(tb)
 	return r, g, b
 
-def find_sharpen(pixels, sharpen_times):
+def find_sharpen(multiply, linear_blur):
 	sharpen = []
-	for x in xrange(len(pixels)):
+	for i in xrange(len(multiply)):
 		sharpen.append([])
-		for y in xrange(len(pixels[x])):
-			sharpen[-1].append(sharpen_times * pixels[x][y])
-	return sharpen
+		for j in xrange(len(multiply[i])):
+			sharpen[-1].append(multiply[i][j] - linear_blur[i][j])
+	return sharpen		
 
 def sharpen(pic='lena.bmp', sharpen_times=2):
-	im = Image.open(pic)
-	pixels = im.load()
-	h, w = im.size
-	r, g, b = seg_rgb(pixels, h, w)
+	multiply_image = multiply.multiply(pic, sharpen_times)
+	multiply_pixels = multiply_image.load()
+	mh, mw = multiply_image.size
+	mr, mg, mb = seg_rgb(multiply_pixels, mh, mw)
 
-	sr = find_sharpen(r, sharpen_times) 
-	sg = find_sharpen(g, sharpen_times)
-	sb = find_sharpen(b, sharpen_times)
+	linear_blur_image = linear_blur.linear_blur(pic)
+	linear_blur_pixels = linear_blur_image.load()
+	lbh, lbw = linear_blur_image.size
+	lbr, lbg, lbb = seg_rgb(linear_blur_pixels, lbh, lbw)
 
-	sharpen_image =  Image.new( 'RGB', (h, w), "black")
+	sr = find_sharpen(mr, lbr) 
+	sg = find_sharpen(mg, lbg)
+	sb = find_sharpen(mb, lbb)
+
+
+	sharpen_image =  Image.new( 'RGB', (mh, mw), "black")
 	si = sharpen_image.load()
-	for i in xrange(h):
-		for j in xrange(w):
+	for i in xrange(mh):
+		for j in xrange(mw):
 			si[i, j] = (sr[i][j], sg[i][j], sb[i][j])
 	sharpen_image.show()
 	return sharpen_image
