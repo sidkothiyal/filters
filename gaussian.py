@@ -2,15 +2,16 @@ from PIL import Image
 import math
 import sys
 
-def gaussian_func(x, y, sigma=0.84089642):
+def gaussian_func(x, y, sigma=2.84089642):
 	result = math.exp(-((x*x) + (y*y))/(2 * sigma * sigma))/(2 * sigma * sigma * math.pi)
 	return result
 
 def kernel_calculation(kernel):
-	ele_sum = 0 
+	ele_sum = 0
 	for x in xrange(len(kernel)):
 		for y in xrange(len(kernel[x])):
-			ele_sum += (gaussian_func(x+1, y+1) * kernel[x][y])
+			#print (len(kernel) - x - 1), (len(kernel[x]) - y - 1)
+			ele_sum += (gaussian_func(len(kernel) - x - 1, len(kernel[x]) - y - 1) * kernel[x][y])
 	#print kernel
 	#print ele_sum
 	return int(ele_sum)
@@ -54,7 +55,7 @@ def find_gaussian(pixels, kernel_size):
 			
 	return gaussian
 
-def gaussian(pic='lena.bmp', kernel_size=11):
+def gaussian(pic='lena.bmp', kernel_size=5):
 	if kernel_size <= 1:
 		print "Please select a bigger kernel size"
 		sys.exit(0)
