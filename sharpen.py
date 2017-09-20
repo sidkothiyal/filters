@@ -25,8 +25,12 @@ def find_sharpen(multiply, linear_blur, pixels):
 			sharpen[-1].append(multiply[i][j] - linear_blur[i][j] + pixels[i][j])
 	return sharpen		
 
-def sharpen(pic='lena.bmp', sharpen_times=2):
-	im = Image.open(pic)
+def sharpen(pic='lena.bmp', sharpen_times=2, img=None):
+	im = None
+	if img != None:
+		im = img
+	else:
+		im = Image.open(pic)
 	pixels = im.load()
 	h, w = im.size
 	r, g, b = seg_rgb(pixels, h, w)

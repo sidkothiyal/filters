@@ -23,8 +23,12 @@ def find_multiply(pixels, multiply_times):
 			multiply[-1].append(multiply_times * pixels[x][y])
 	return multiply
 
-def multiply(pic='lena.bmp', multiply_times=2):
-	im = Image.open(pic)
+def multiply(pic='lena.bmp', multiply_times=2, img=None):
+	im = None
+	if img != None:
+		im = img
+	else:	
+		im = Image.open(pic)
 	pixels = im.load()
 	h, w = im.size
 	r, g, b = seg_rgb(pixels, h, w)

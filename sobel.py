@@ -201,8 +201,12 @@ def get_mag_angle(rx, ry, gx, gy, bx, by, h, w):
 			
 	return mag, angle
 
-def sobel(pic='lena.bmp', max=True, display=False):
-	im = Image.open(name)
+def sobel(pic='lena.bmp', max=True, display=False, img=None):
+	im = None
+	if img != None:
+		im = img
+	else:
+		im = Image.open(name)
 	pixels = im.load()
 	h, w = im.size
 	if display:

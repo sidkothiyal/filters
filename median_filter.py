@@ -45,8 +45,12 @@ def find_median_filter(pixels, kernel_size):
 			median_filter[-1].append(median(kernel))
 	return median_filter
 
-def median_filter(pic='lena.bmp', kernel_size=5):
-	im = Image.open(pic)
+def median_filter(pic='lena.bmp', kernel_size=5, img=None):
+	im = None
+	if img != None:
+		im = img
+	else:	
+		im = Image.open(pic)
 	pixels = im.load()
 	h, w = im.size
 	r, g, b = seg_rgb(pixels, h, w)

@@ -56,7 +56,7 @@ def find_gaussian(pixels, kernel_size):
 			
 	return gaussian
 
-def gaussian(pic='lena.bmp', kernel_size=11):
+def gaussian(pic='lena.bmp', kernel_size=11, img=None):
 	if kernel_size <= 1:
 		print "Please select a bigger kernel size"
 		sys.exit(0)
@@ -64,8 +64,11 @@ def gaussian(pic='lena.bmp', kernel_size=11):
 	elif kernel_size % 2 == 0:
 		print "Please select odd kernel size"
 		sys.exit(0)
-
-	im = Image.open(pic)
+	im = None
+	if img != None:
+		im = img
+	else:	
+		im = Image.open(pic)
 	pixels = im.load()
 	h, w = im.size
 	r, g, b = seg_rgb(pixels, h, w)

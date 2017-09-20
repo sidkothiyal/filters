@@ -39,8 +39,12 @@ def find_linear_blur(pixels, kernel_size):
 			linear_blur[-1].append(blur_it(kernel))
 	return linear_blur
 
-def linear_blur(pic='lena.bmp', kernel_size=5):
-	im = Image.open(pic)
+def linear_blur(pic='lena.bmp', kernel_size=5, img=None):
+	im = None
+	if img != None:
+		im = img
+	else:
+		im = Image.open(pic)
 	pixels = im.load()
 	h, w = im.size
 	r, g, b = seg_rgb(pixels, h, w)

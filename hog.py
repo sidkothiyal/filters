@@ -285,8 +285,12 @@ def normalized_bins(histograms):
 			feature_vector.extend(normalize(tempHist))
 	return feature_vector			
 
-def get_features(name):
-	im = Image.open(name)
+def get_features(name='lena.bmp', img=None):
+	im = None
+	if img != None:
+		im = img
+	else:	
+		im = Image.open(name)
 	pixels = im.load()
 	h, w = im.size
 	r =  Image.new( 'RGB', (h, w), "black")
