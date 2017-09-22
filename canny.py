@@ -154,7 +154,7 @@ def hysteresis_thresholding(local_maxima, higher=30, lower=10):
 	ghImage.show()
 	return gh
 
-def canny(pic='lena_top.jpg', kernel=9, img=None):
+def canny(pic='lena.bmp', kernel=9, img=None):
 	im = None
 	if img != None:
 		im = img
