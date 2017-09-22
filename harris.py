@@ -35,7 +35,7 @@ def seg_rgb(pixels, h, w):
 		g.append([])
 		b.append([])
 		for j in xrange(w):
-			tr, tg, tb = pixels[i,j]
+			tr, tg, tb, huh = pixels[i,j]
 			r[-1].append(tr)
 			g[-1].append(tg)
 			b[-1].append(tb)
@@ -145,14 +145,45 @@ def find_gaussian(pixels, kernel_size):
 			
 	return gaussian
 
-def harris_point(pixels, gix2, giy2, gixy, alpha=0.05):
+def harris_point(gix2, giy2, gixy, alpha=0.05):
+	harr_points = []
 	for i in xrange(len(gixy)):
+		harr_points.append([])
 		for j in xrange(len(gixy[i])):
 			harr = (gix2[i][j] * giy2[i][j]) - (gixy[i][j] * gixy[i][j]) - (alpha * (gix2[i][j] + giy2[i][j])* (gix2[i][j] + giy2[i][j]))
-			if harr < 0:
-				pixels[i,j] = (255, 0, 0)
+			if harr > 0:
+				harr_points[-1].append(1)
+			else:
+				harr_points[-1].append(0)
+	return harr_points
 
-def harris(pic='lena.bmp', kernel=9, img=None):
+def non_maxima_suppression(pixels, h, w, harr_points):
+	img = []
+	for i in xrange(h):
+		img.append([])
+		for j in xrange(w):
+			img[-1].append(0)
+			if harr_points[i][j] == 1:
+				greater_x = False
+				for x in xrange(3):
+					greater_y = False
+					for y in xrange(3):
+						pos_x = x - 1
+						pos_y = y - 1
+						if i + pos_x > 0 and i + pos_x < h and j + pos_y > 0  and j + pos_y < w:
+							if pixels[i,j] > pixels[i+pos_x, j+pos_y]:
+								greater_y = True
+								break 
+					if greater_y:
+						greater_x = True
+						break
+				if not greater_x:
+					img[-1][-1] = 255
+					#pixels[i, j] = (255, 0, 0)
+	im = arr2image.get_image(l=img)
+	im.show()
+
+def harris(pic='check.png', kernel=9, img=None):
 	im = None
 	if img != None:
 		im = img
@@ -173,6 +204,7 @@ def harris(pic='lena.bmp', kernel=9, img=None):
 	giy2 = find_gaussian(iy2, 3)
 	gixy = find_gaussian(ixy, 3)
 
+	'''
 	im2 = arr2image.get_image(l=gix2)
 	im2.show()
 
@@ -181,10 +213,10 @@ def harris(pic='lena.bmp', kernel=9, img=None):
 
 	im2 = arr2image.get_image(l=gixy)
 	im2.show()
+	'''
 
-
-	harris_point(pixels, gix2, giy2, gixy)
-
+	harr_points = harris_point(gix2, giy2, gixy)
+	non_maxima_suppression(pixels, h, w, harr_points)
 	im.show()
 
 if __name__ == '__main__':
