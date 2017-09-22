@@ -1,5 +1,6 @@
 from PIL import Image
 import math
+import arr2image
 
 grad_x = [[1, 0, -1],
 		[2, 0, -2],
@@ -77,14 +78,14 @@ def find_sobel_max(pixels, h, w):
 			
 			pos = get_max([math.sqrt((trX*trX) + (trY*trY)), math.sqrt((tgX*tgX) + (tgY*tgY)), math.sqrt((tbX*tbX) + (tbY*tbY))])
 			if pos == 0:
-				ix.append(trX)
-				iy.append(trY)
+				ix[-1].append(trX)
+				iy[-1].append(trY)
 			elif pos == 1:
-				ix.append(tgX)
-				iy.append(tgY)
+				ix[-1].append(tgX)
+				iy[-1].append(tgY)
 			elif pos == 2:
-				ix.append(tbX)
-				iy.append(tbY)
+				ix[-1].append(tbX)
+				iy[-1].append(tbY)
 				
 		ix[-1].append(0)
 		iy[-1].append(0)
@@ -144,6 +145,12 @@ def find_gaussian(pixels, kernel_size):
 			
 	return gaussian
 
+def harris_point(pixels, gix2, giy2, gixy, alpha=0.05):
+	for i in xrange(len(gixy)):
+		for j in xrange(len(gixy[i])):
+			harr = (gix2[i][j] * giy2[i][j]) - (gixy[i][j] * gixy[i][j]) - (alpha * (gix2[i][j] + giy2[i][j])* (gix2[i][j] + giy2[i][j]))
+			if harr < 0:
+				pixels[i,j] = (255, 0, 0)
 
 def harris(pic='lena.bmp', kernel=9, img=None):
 	im = None
@@ -162,8 +169,23 @@ def harris(pic='lena.bmp', kernel=9, img=None):
 	iy2 = multiply_element_by_element(iy, iy)
 	ixy = multiply_element_by_element(ix, iy)
 
+	gix2 = find_gaussian(ix2, 3)
+	giy2 = find_gaussian(iy2, 3)
+	gixy = find_gaussian(ixy, 3)
+
+	im2 = arr2image.get_image(l=gix2)
+	im2.show()
+
+	im2 = arr2image.get_image(l=giy2)
+	im2.show()
+
+	im2 = arr2image.get_image(l=gixy)
+	im2.show()
+
+
+	harris_point(pixels, gix2, giy2, gixy)
 
 	im.show()
 
 if __name__ == '__main__':
-	main()
+	harris()
