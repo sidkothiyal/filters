@@ -201,12 +201,21 @@ def get_mag_angle(rx, ry, gx, gy, bx, by, h, w):
 			
 	return mag, angle
 
+def seg_rgb_image(pixels, h, w, r, g, b):
+	for i in xrange(h):
+		for j in xrange(w):
+			tr, tg, tb = pixels[i,j]
+			r[i, j] = (tr, 0, 0)
+			g[i, j] = (0, tg, 0)
+			b[i, j] = (0, 0, tb)
+	return r, g, b
+
 def sobel(pic='lena.bmp', max=True, display=False, img=None):
 	im = None
 	if img != None:
 		im = img
 	else:
-		im = Image.open(name)
+		im = Image.open(pic)
 	pixels = im.load()
 	h, w = im.size
 	if display:
@@ -224,7 +233,7 @@ def sobel(pic='lena.bmp', max=True, display=False, img=None):
 		g.show()
 		b.show()
 
-	rx, ry, gx, gy, bx, by = find_sobel(pixels, h, w)
+	rx, ry, gx, gy, bx, by = find_sobel(pixels, h, w, display= True)
 	if max:
 		mag, angle = get_mag_angle(rx, ry, gx, gy, bx, by, h, w)
 		return mag, angle
@@ -232,4 +241,4 @@ def sobel(pic='lena.bmp', max=True, display=False, img=None):
 		return rx, ry, gx, gy, bx, by
 
 if __name__ == '__main__':
-	sobel()	
+	sobel(display=True)	
